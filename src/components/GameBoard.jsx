@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import { Goal, PartyPopper, PersonStanding, Repeat, Timer, Trophy } from "lucide-react";
+import { Apple, Beef, Beer, Carrot, Cherry, Citrus, Coffee, Cookie, EggFried, Fish, Goal, Hamburger, IceCreamCone, 
+  Lollipop, Milk, PartyPopper, PersonStanding, Pizza, Popsicle, Repeat, Timer, Trophy, Utensils, Wine } from "lucide-react";
+import { useLanguage } from "../LanguageContext";
 
-const allEmojis = [
-  "🍎", "🍌", "🍇", "🍓", "🍉", "🥝", "🍒", "🍑",
-  "🍍", "🥥", "🥭", "🍋", "🫐", "🍈", "🍅", "🌽",
-  "🥕", "🍆"
+const allEmojis = [<Apple/>, <Cherry/>, <Popsicle/>, <Coffee/>, <Pizza/>, <EggFried/>, <Beer/>, <Hamburger/>,
+  <Wine/>, <IceCreamCone />, <Utensils />, <Fish />, <Lollipop />, <Citrus />, <Milk />, <Cookie />,
+  <Beef />, <Carrot />
 ];
 
 function shuffle(array) {
@@ -29,6 +30,7 @@ export default function GameBoard({ players, gridSize }) {
   const [isRunning, setIsRunning] = useState(false);
   const [turn, setTurn] = useState(1); 
   const [score, setScore] = useState({ 1: 0, 2: 0 });
+  const {t} = useLanguage();
 
   useEffect(() => {
     const selected = allEmojis.slice(0, totalCards / 2);
@@ -115,44 +117,51 @@ export default function GameBoard({ players, gridSize }) {
 
       {players === 2 && (
         <div className="text-center mb-4 font-medium">
-            <p className="flex items-center justify-center gap-2">Sıra: Oyuncu {turn} | <Goal className="text-red-700"/>  Skor: <PersonStanding className="text-indigo-500"/> {score[1]}  <PersonStanding/> {score[2]}</p>
+            <p className="flex items-center justify-center gap-2">{time("turn")}: {time("player")} {turn} | <Goal className="text-red-700"/>  {time("score")}: <PersonStanding className="text-indigo-500"/> {score[1]}  <PersonStanding/> {score[2]}</p>
         </div>
       )}
 
-      <main
-        className={`grid grid-cols-${gridSize} gap-3 md:gap-5 max-w-screen-sm mx-auto mb-10`}
-      >
-        {cards.map((card) => (
+      <div className="flex flex-col md:flex-row px-2 md:justify-around md:px-40 md:py-6">
+        <main className={`grid grid-cols-${gridSize} gap-2 md:gap-4 w-full max-w-[500px]`}>
+          {cards.map((card) => (
           <div
             key={card.id}
             onClick={() => handleFlip(card)}
-            className={`flex items-center justify-center rounded-xl text-2xl md:text-4xl cursor-pointer select-none aspect-square transition duration-300 ${
-              isFlipped(card.id)
-                ? "bg-white border-2 border-slate-300"
-                : "bg-blue-300 hover:bg-blue-400"
-            }`}
+            className={`flex items-center justify-center rounded-lg 
+                        text-3xl md:text-5xl 
+                        cursor-pointer select-none 
+                        aspect-square 
+                        transition duration-300  
+                        ${
+                          isFlipped(card.id)
+                            ? "bg-white border-2 border-slate-300"
+                            : "bg-blue-300 hover:bg-blue-400"
+                        }`}
           >
             {isFlipped(card.id) ? card.emoji : ""}
           </div>
         ))}
-      </main>
+        </main>
 
-      <Footer time={time} moves={moves} />
+        <div className="md:sticky md:top-10 md:w-1/4 w-full">
+          <Footer time={time} moves={moves} />
+        </div>
+      </div>
 
       {gameOver && (
         <div className=" flex flex-col mt-6 p-4 bg-green-100 text-green-800 rounded-xl text-center font-medium">
-            <p className="flex items-center justify-center gap-2"> <PartyPopper/> Oyun Bitti!</p>
-            <p className="flex items-center justify-center gap-2"> <Timer/> Süre : {time} saniye</p>
-            <p className="flex items-center justify-center gap-2"> <Repeat/> Hamle: {moves}</p>
+            <p className="flex items-center justify-center gap-2"> <PartyPopper/> {t("gameOver")}</p>
+            <p className="flex items-center justify-center gap-2"> <Timer/> {t("time")} : {time} s{t("seconds")}</p>
+            <p className="flex items-center justify-center gap-2"> <Repeat/> {t("moves")}: {moves}</p>
           {players === 2 && (
             <>
               <br />
-              <p className="flex items-center justify-center gap-2"><Trophy/> Kazanan:{" "}</p>
+              <p className="flex items-center justify-center gap-2"><Trophy/> {t("winner")}:{" "}</p>
               {score[1] === score[2]
-                ? "Berabere!"
+                ? t("tie")
                 : score[1] > score[2]
-                ? "Oyuncu 1"
-                : "Oyuncu 2"}
+                ? t("player1")
+                : t("player2") }
             </>
           )}
         </div>

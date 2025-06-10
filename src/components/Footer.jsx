@@ -1,4 +1,5 @@
 import { ArrowLeftRight, Hourglass } from "lucide-react";
+import { useLanguage } from "../LanguageContext";
 
 export default function Footer({ time, moves }) {
   const formatTime = (seconds) => {
@@ -6,15 +7,16 @@ export default function Footer({ time, moves }) {
     const s = String(seconds % 60).padStart(2, '0');
     return `${m}:${s}`;
   };
+  const {t} = useLanguage();
 
   return (
     <footer className="flex flex-col md:flex-row justify-between gap-4 mt-6">
       <div className="bg-slate-200 rounded-lg p-4 text-center flex-1">
-        <p className=" flex items-center justify-center gap-2 text-xl font-semibold text-slate-600"> <Hourglass/>Time</p>
+        <p className=" flex items-center justify-center gap-2 text-xl font-semibold text-slate-600"> <Hourglass/>{t("time")}</p>
         <p className="text-2xl font-bold text-slate-800 ">{formatTime(time)}</p>
       </div>
       <div className=" bg-slate-200 rounded-lg p-4 text-center flex-1">
-        <p className=" flex items-center justify-center gap-2 text-xl font-semibold text-slate-600"><ArrowLeftRight/> Moves</p>
+        <p className=" flex items-center justify-center gap-2 text-xl font-semibold text-slate-600"><ArrowLeftRight/> {t("moves")}</p>
         <p className="text-2xl font-bold text-slate-800">{moves}</p>
       </div>
     </footer>
