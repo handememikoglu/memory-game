@@ -4,6 +4,7 @@ import Footer from "./Footer";
 import { Apple, Beef, Beer, Carrot, Cherry, Citrus, Coffee, Cookie, EggFried, Fish, Goal, Hamburger, IceCreamCone, 
   Lollipop, Milk, PartyPopper, PersonStanding, Pizza, Popsicle, Repeat, Timer, Trophy, Utensils, Wine } from "lucide-react";
 import { useLanguage } from "../LanguageContext";
+import GameOverModal from "./GameOverModal";
 
 const allEmojis = [<Apple/>, <Cherry/>, <Popsicle/>, <Coffee/>, <Pizza/>, <EggFried/>, <Beer/>, <Hamburger/>,
   <Wine/>, <IceCreamCone />, <Utensils />, <Fish />, <Lollipop />, <Citrus />, <Milk />, <Cookie />,
@@ -31,6 +32,9 @@ export default function GameBoard({ players, gridSize }) {
   const [turn, setTurn] = useState(1); 
   const [score, setScore] = useState({ 1: 0, 2: 0 });
   const {t} = useLanguage();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [winnerText, setWinnerText] = useState("");
+
 
   useEffect(() => {
     const selected = allEmojis.slice(0, totalCards / 2);
@@ -56,8 +60,28 @@ export default function GameBoard({ players, gridSize }) {
     if (cards.length > 0 && matched.length === cards.length) {
       setGameOver(true);
       setIsRunning(false);
+       setIsModalOpen(true);
     }
   }, [matched, cards]);
+
+  useEffect(() => {
+  if (cards.length > 0 && matched.length === cards.length) {
+    setGameOver(true);
+    setIsRunning(false);
+    setIsModalOpen(true);
+
+    if (players === 2) {
+      if (score[1] > score[2]) {
+        setWinnerText(t("player1"));
+      } else if (score[2] > score[1]) {
+        setWinnerText(t("player2"));
+      } else {
+        setWinnerText(t("tie"));
+      }
+    } 
+  }
+}, [matched, cards, players, score]);
+
 
   const handleFlip = (card) => {
     if (!isRunning) setIsRunning(true);
@@ -117,7 +141,7 @@ export default function GameBoard({ players, gridSize }) {
 
       {players === 2 && (
         <div className="text-center mb-4 font-medium">
-            <p className="flex items-center justify-center gap-2">{time("turn")}: {time("player")} {turn} | <Goal className="text-red-700"/>  {time("score")}: <PersonStanding className="text-indigo-500"/> {score[1]}  <PersonStanding/> {score[2]}</p>
+            <p className="flex items-center justify-center gap-2">{t("turn")}: {t("player")} {turn} | <Goal className="text-red-700"/>  {t("score")}: <PersonStanding className="text-indigo-500"/> {score[1]}  <PersonStanding/> {score[2]}</p>
         </div>
       )}
 
@@ -149,22 +173,13 @@ export default function GameBoard({ players, gridSize }) {
       </div>
 
       {gameOver && (
-        <div className=" flex flex-col mt-6 p-4 bg-green-100 text-green-800 rounded-xl text-center font-medium">
-            <p className="flex items-center justify-center gap-2"> <PartyPopper/> {t("gameOver")}</p>
-            <p className="flex items-center justify-center gap-2"> <Timer/> {t("time")} : {time} s{t("seconds")}</p>
-            <p className="flex items-center justify-center gap-2"> <Repeat/> {t("moves")}: {moves}</p>
-          {players === 2 && (
-            <>
-              <br />
-              <p className="flex items-center justify-center gap-2"><Trophy/> {t("winner")}:{" "}</p>
-              {score[1] === score[2]
-                ? t("tie")
-                : score[1] > score[2]
-                ? t("player1")
-                : t("player2") }
-            </>
-          )}
-        </div>
+        <GameOverModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        time={time}
+        moves={moves}
+        winnerText={winnerText}
+      />
       )}
     </>
   );

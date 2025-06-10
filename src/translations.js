@@ -19,7 +19,8 @@ export const translations = {
     score: "Score",
     winner: "Winner",
     seconds: "seconds",
-    tie:" It's a tie!"
+    tie:" It's a tie!",
+    close:"Close"
   },
   tr: {
     home_page_title:"Hafıza Oyunu",
@@ -41,6 +42,7 @@ export const translations = {
     score: "Skor",
     winner: "Kazanan",
     seconds: "saniye",
-    tie:"Berabere !"
+    tie:"Berabere !",
+    close:"Kapat"
   },
 };
